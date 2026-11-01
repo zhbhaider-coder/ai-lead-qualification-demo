@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="LeadQual AI — interactive demo. Score, rank and route every inquiry with BANT+ lead qualification." />
+    <link rel="icon" href="data:," />
+    <title>LeadQual AI — Interactive Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #070c16;
+        --bg-2: #0a1120;
+        --panel: #0d1626;
+        --panel-2: #101b31;
+        --input-bg: #0a1324;
+        --border: #1f2c47;
+        --border-soft: #16223c;
+        --text: #eef1f8;
+        --muted: #9dabc4;
+        --faint: #68779a;
+        --gold: #d4af63;
+        --gold-strong: #e9cd8a;
+        --gold-ink: #191104;
+        --gold-dim: rgba(212, 175, 99, 0.13);
+        --hot: #ff7a5c;
+        --hot-bg: rgba(255, 122, 92, 0.13);
+        --warm: #e3ba6b;
+        --warm-bg: rgba(212, 175, 99, 0.14);
+        --cold: #93a8cc;
+        --cold-bg: rgba(127, 147, 184, 0.14);
+        --error: #ff9a86;
+        --radius: 14px;
+        --font: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(900px 480px at 75% -120px, rgba(212, 175, 99, 0.07), transparent 60%),
+          linear-gradient(180deg, var(--bg-2), var(--bg) 340px);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+      section { scroll-margin-top: 92px; }
+      h1, h2, h3 { line-height: 1.15; margin: 0; }
+      p { margin: 0; }
+      a { color: var(--gold-strong); }
+
+      /* ---------- Nav ---------- */
+      .nav {
+        position: sticky; top: 0; z-index: 50;
+        background: rgba(7, 12, 22, 0.88);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-soft);
+      }
+      .nav-inner {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 16px; height: 64px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+      .brand .dot {
+        width: 26px; height: 26px; border-radius: 7px; flex: none;
+        background: var(--gold-dim); border: 1px solid rgba(212, 175, 99, 0.45);
+        display: grid; place-items: center;
+      }
+      .brand .dot svg { width: 15px; height: 15px; }
+      .brand em { font-style: normal; color: var(--gold); }
+      .nav-links { display: flex; gap: 6px; }
+      .nav-links a {
+        color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.92rem;
+        padding: 8px 13px; border-radius: 8px; white-space: nowrap;
+      }
+      .nav-links a:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+
+      /* ---------- Hero ---------- */
+      .hero { padding: 84px 0 70px; text-align: left; }
+      .hero h1 { font-size: clamp(2.7rem, 6.5vw, 4.4rem); font-weight: 800; letter-spacing: -0.03em; }
+      .hero h1 .ai { color: var(--gold); }
+      .hero .pitch { margin-top: 20px; font-size: clamp(1.12rem, 2.4vw, 1.4rem); color: var(--muted); max-width: 640px; font-weight: 500; }
+      .hero .cta-row { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+      .stat-strip {
+        margin-top: 52px; display: flex; flex-wrap: wrap;
+        border: 1px solid var(--border-soft); border-radius: var(--radius);
+        background: rgba(13, 22, 38, 0.6); overflow: hidden;
+      }
+      .stat { flex: 1 1 200px; padding: 18px 22px; }
+      .stat + .stat { border-left: 1px solid var(--border-soft); }
+      .stat b { display: block; font-size: 1.45rem; font-weight: 800; color: var(--gold-strong); letter-spacing: -0.01em; }
+      .stat span { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+
+      /* ---------- Buttons ---------- */
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        font-family: var(--font); font-weight: 700; font-size: 0.95rem;
+        padding: 12px 22px; border-radius: 10px; cursor: pointer;
+        border: 1px solid transparent; text-decoration: none;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      }
+      .btn:active { transform: translateY(1px); }
+      .btn-gold { background: var(--gold); color: var(--gold-ink); }
+      .btn-gold:hover { background: var(--gold-strong); }
+      .btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+      .btn-outline:hover { border-color: var(--gold); color: var(--gold-strong); }
+      .btn-small { padding: 7px 13px; font-size: 0.84rem; border-radius: 8px; }
+      .btn-danger { background: transparent; color: var(--error); border-color: rgba(255, 122, 92, 0.35); }
+      .btn-danger:hover { background: var(--hot-bg); border-color: var(--hot); }
+      .btn[disabled] { opacity: 0.55; cursor: default; }
+
+      /* ---------- Sections ---------- */
+      .section { padding: 64px 0; }
+      .section-head { max-width: 680px; margin-bottom: 34px; }
+      .section-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; }
+      .section-head p { margin-top: 10px; color: var(--muted); font-size: 1.02rem; }
+
+      /* ---------- Steps ---------- */
+      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .step-card {
+        background: var(--panel); border: 1px solid var(--border-soft);
+        border-radius: var(--radius); padding: 26px 24px;
+      }
+      .step-num {
+        width: 38px; height: 38px; border-radius: 50%;
+        border: 1.5px solid var(--gold); color: var(--gold-strong);
+        display: grid; place-items: center; font-weight: 800; font-size: 1rem;
+        margin-bottom: 16px;
+      }
+      .step-card h3 { font-size: 1.12rem; font-weight: 700; margin-bottom: 8px; }
+      .step-card p { color: var(--muted); font-size: 0.95rem; }
+
+      /* ---------- Demo layout ---------- */
+      .demo-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 18px; align-items: start; }
+      .card {
+        background: var(--panel); border: 1px solid var(--border-soft);
+        border-radius: var(--radius); padding: 26px;
+      }
+      .card h3 { font-size: 1.08rem; font-weight: 700; }
+      .card .card-sub { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+      form .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin-top: 18px; }
+      .field { display: flex; flex-direction: column; gap: 6px; }
+      .field.full { grid-column: 1 / -1; }
+      .field label { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+      .field label .req { color: var(--gold); }
+      .field input, .field select, .field textarea {
+        font-family: var(--font); font-size: 0.95rem; color: var(--text);
+        background: var(--input-bg); border: 1px solid var(--border);
+        border-radius: 9px; padding: 10px 12px; width: 100%;
+      }
+      .field textarea { resize: vertical; min-height: 92px; }
+      .field input:focus, .field select:focus, .field textarea:focus {
+        outline: none; border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 99, 0.18);
+      }
+      .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--hot); }
+      .field .err { display: none; color: var(--error); font-size: 0.8rem; font-weight: 600; }
+      .field.invalid .err { display: block; }
+      .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+      .status-line { min-height: 1.4em; margin-top: 14px; font-size: 0.88rem; color: var(--gold-strong); font-weight: 600; }
+      .status-line.error { color: var(--error); }
+
+      /* ---------- Result panel ---------- */
+      .result-empty { color: var(--faint); font-size: 0.95rem; padding: 26px 0 8px; text-align: center; }
+      .result-empty svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.6; }
+      .score-top { display: flex; align-items: center; gap: 18px; margin-top: 16px; }
+      .score-num { font-size: 4.2rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+      .score-of { color: var(--faint); font-weight: 700; font-size: 1rem; }
+      .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 0.8rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+        padding: 5px 12px; border-radius: 999px; border: 1px solid;
+      }
+      .badge.hot { color: var(--hot); background: var(--hot-bg); border-color: rgba(255, 122, 92, 0.45); }
+      .badge.warm { color: var(--warm); background: var(--warm-bg); border-color: rgba(212, 175, 99, 0.45); }
+      .badge.cold { color: var(--cold); background: var(--cold-bg); border-color: rgba(127, 147, 184, 0.45); }
+      .result-who { margin-top: 2px; }
+      .result-who b { font-size: 1.05rem; }
+      .result-who span { color: var(--muted); font-size: 0.9rem; display: block; }
+      .factors { margin-top: 22px; display: flex; flex-direction: column; gap: 12px; }
+      .factor { display: grid; grid-template-columns: 96px 1fr 34px; align-items: center; gap: 12px; }
+      .factor .f-label { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+      .factor .f-val { font-size: 0.85rem; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+      .track { height: 8px; border-radius: 99px; background: #16223c; overflow: hidden; }
+      .fill { height: 100%; border-radius: 99px; background: var(--gold); width: 0; transition: width 0.7s ease; }
+      .fill.hot { background: var(--hot); } .fill.cold { background: var(--cold); }
+      .reasoning { margin-top: 20px; color: var(--muted); font-size: 0.94rem; border-top: 1px solid var(--border-soft); padding-top: 16px; }
+      .reasoning b { color: var(--text); }
+
+      .weights-note { margin-top: 18px; background: var(--panel); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 20px 24px; }
+      .weights-note h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 10px; }
+      .weights-note p { color: var(--muted); font-size: 0.9rem; }
+      .weight-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .weight-chips span {
+        font-size: 0.82rem; font-weight: 700; color: var(--gold-strong);
+        background: var(--gold-dim); border: 1px solid rgba(212, 175, 99, 0.3);
+        padding: 4px 11px; border-radius: 999px;
+      }
+      .formula { margin-top: 12px; font-size: 0.85rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+      /* ---------- Dashboard ---------- */
+      .dash-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 6px; }
+      .dash-counts { display: flex; flex-wrap: wrap; gap: 8px; }
+      .count-chip { font-size: 0.82rem; font-weight: 700; color: var(--muted); border: 1px solid var(--border-soft); padding: 4px 11px; border-radius: 999px; background: var(--panel-2); }
+      .count-chip b { color: var(--text); }
+      .count-chip .dotc { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+      .table-scroll { margin-top: 14px; }
+      table { width: 100%; border-collapse: collapse; }
+      thead th {
+        text-align: left; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+        color: var(--faint); padding: 10px 12px; border-bottom: 1px solid var(--border);
+      }
+      tbody td { padding: 13px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; font-size: 0.94rem; }
+      tbody tr:last-child td { border-bottom: none; }
+      td.rank { color: var(--faint); font-weight: 800; font-variant-numeric: tabular-nums; }
+      td .lead-name { font-weight: 700; }
+      td .lead-email { display: block; color: var(--faint); font-size: 0.8rem; }
+      td.score-cell { font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+      .sort-btn {
+        background: none; border: none; cursor: pointer; padding: 0;
+        font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit;
+        display: inline-flex; align-items: center; gap: 5px;
+      }
+      .sort-btn:hover { color: var(--gold-strong); }
+      .sort-btn .arrow { color: var(--gold); font-size: 0.85em; }
+      .row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+      .empty-row td { text-align: center; color: var(--faint); padding: 34px 12px; font-size: 0.95rem; }
+
+      /* ---------- Pricing ---------- */
+      .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+      .price-card {
+        background: var(--panel); border: 1px solid var(--border-soft);
+        border-radius: var(--radius); padding: 28px 26px; display: flex; flex-direction: column;
+        position: relative;
+      }
+      .price-card.popular { border-color: rgba(212, 175, 99, 0.55); background: var(--panel-2); }
+      .pop-tag {
+        position: absolute; top: -12px; left: 26px;
+        background: var(--gold); color: var(--gold-ink);
+        font-size: 0.72rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+        padding: 4px 10px; border-radius: 999px;
+      }
+      .price-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--muted); }
+      .price { margin-top: 10px; font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; }
+      .price small { font-size: 0.95rem; color: var(--faint); font-weight: 600; }
+      .price-card p { margin-top: 12px; color: var(--muted); font-size: 0.94rem; flex: 1; }
+      .price-card .btn { margin-top: 22px; }
+
+      /* ---------- Footer ---------- */
+      footer { border-top: 1px solid var(--border-soft); padding: 30px 0 40px; margin-top: 20px; }
+      footer p { text-align: center; color: var(--faint); font-size: 0.9rem; }
+
+      /* ---------- Modal ---------- */
+      .overlay {
+        position: fixed; inset: 0; z-index: 100;
+        background: rgba(3, 6, 12, 0.72);
+        display: none; align-items: center; justify-content: center; padding: 18px;
+      }
+      .overlay.open { display: flex; }
+      .modal {
+        background: var(--panel-2); border: 1px solid var(--border);
+        border-radius: 16px; width: 100%; max-width: 580px; max-height: 86vh;
+        overflow-y: auto; padding: 26px;
+      }
+      .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+      .modal-head h3 { font-size: 1.15rem; font-weight: 800; }
+      .modal-head p { color: var(--muted); font-size: 0.88rem; margin-top: 3px; }
+      .close-x {
+        background: none; border: 1px solid var(--border); color: var(--muted);
+        width: 34px; height: 34px; border-radius: 9px; cursor: pointer; flex: none;
+        font-size: 1rem; line-height: 1;
+      }
+      .close-x:hover { color: var(--text); border-color: var(--gold); }
+      .draft-subject { margin-top: 18px; font-weight: 700; font-size: 0.95rem; }
+      .draft-subject span { color: var(--faint); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
+      .draft-body {
+        margin-top: 14px; background: var(--input-bg); border: 1px solid var(--border-soft);
+        border-radius: 10px; padding: 16px; white-space: pre-wrap;
+        font-size: 0.92rem; color: var(--text); line-height: 1.65;
+      }
+      .modal-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+      .copy-feedback { font-size: 0.86rem; color: var(--gold-strong); font-weight: 700; align-self: center; }
+
+      /* ---------- Responsive ---------- */
+      @media (max-width: 900px) {
+        .steps, .pricing { grid-template-columns: 1fr; }
+        .demo-grid { grid-template-columns: 1fr; }
+        .price-card.popular { margin-top: 10px; }
+      }
+      @media (max-width: 680px) {
+        .wrap { padding: 0 16px; }
+        .nav-inner { height: auto; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; row-gap: 4px; }
+        .nav-links { width: 100%; }
+        .nav-links a { padding: 7px 10px 7px 0; font-size: 0.88rem; }
+        .nav-links a + a { padding-left: 10px; }
+        .hero { padding: 54px 0 46px; }
+        .section { padding: 46px 0; }
+        form .grid { grid-template-columns: 1fr; }
+        .stat + .stat { border-left: none; border-top: 1px solid var(--border-soft); }
+        .card { padding: 20px; }
+        /* Stacked table cards */
+        table, tbody, tr, td { display: block; width: 100%; }
+        thead { display: none; }
+        tbody tr {
+          border: 1px solid var(--border-soft); border-radius: 12px;
+          padding: 8px 14px; margin-bottom: 12px; background: var(--panel-2);
+        }
+        tbody td { border-bottom: 1px solid var(--border-soft); padding: 9px 0; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+        tbody tr td:last-child { border-bottom: none; }
+        td::before { content: attr(data-label); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); flex: none; }
+        td.actions-cell { justify-content: flex-end; }
+        td.actions-cell::before { display: none; }
+        .empty-row td { display: block; text-align: center; }
+        .empty-row td::before { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .fill { transition: none; }
+        .btn { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="#top" aria-label="LeadQual AI home">
+          <span class="dot" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d4af63" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+          </span>
+          LeadQual&nbsp;<em>AI</em>
+        </a>
+        <div class="nav-links">
+          <a href="#demo">Demo</a>
+          <a href="#how">How it works</a>
+          <a href="#pricing">Pricing</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div class="wrap">
+        <h1>LeadQual <span class="ai">AI</span></h1>
+        <p class="pitch">Turn every inquiry into a ranked, sales-ready lead — automatically.</p>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="#demo">Try the live demo</a>
+        </div>
+        <div class="stat-strip" role="list" aria-label="Results">
+          <div class="stat" role="listitem"><b>63%</b><span>faster follow-up</span></div>
+          <div class="stat" role="listitem"><b>2.4x</b><span>more qualified meetings</span></div>
+          <div class="stat" role="listitem"><b>0</b><span>leads lost</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section" id="how" style="padding-top: 20px;">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>How it works</h2>
+          <p>From raw inquiry to a rep's next call, in three steps — no spreadsheets, no gut feel.</p>
+        </div>
+        <div class="steps">
+          <article class="step-card">
+            <div class="step-num" aria-hidden="true">1</div>
+            <h3>Capture</h3>
+            <p>Every inquiry — website form, chat, email, spreadsheet import — lands in one intake pipeline, deduplicated and enriched.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num" aria-hidden="true">2</div>
+            <h3>Score (BANT+)</h3>
+            <p>Each lead is scored 0–100 on Budget, Authority, Need, Timeline, plus engagement signals like email opens and site visits.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num" aria-hidden="true">3</div>
+            <h3>Route &amp; follow up</h3>
+            <p>Hot leads ping your sales team instantly with a drafted outreach message. Warm leads enter nurture. Cold leads are archived — no time wasted.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demo" style="padding-top: 24px;">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Live demo</h2>
+          <p>Score a lead yourself, or load the sample set and watch the pipeline rank them. Everything runs in your browser — the same scoring model, the same weights.</p>
+        </div>
+
+        <div class="demo-grid">
+          <!-- Intake form -->
+          <div class="card">
+            <h3>Lead intake</h3>
+            <p class="card-sub">One inquiry, exactly as it would arrive from your website.</p>
+            <form id="leadForm" novalidate>
+              <div class="grid">
+                <div class="field" data-field="name">
+                  <label for="f-name">Full name <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-name" name="name" type="text" autocomplete="name" placeholder="e.g. Sarah Mitchell" />
+                  <span class="err">Please enter the lead's full name.</span>
+                </div>
+                <div class="field" data-field="email">
+                  <label for="f-email">Work email <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-email" name="email" type="email" autocomplete="email" placeholder="e.g. sarah@company.com" />
+                  <span class="err">Please enter a valid work email.</span>
+                </div>
+                <div class="field" data-field="company">
+                  <label for="f-company">Company <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-company" name="company" type="text" autocomplete="organization" placeholder="e.g. CloudNine Systems" />
+                  <span class="err">Please enter a company.</span>
+                </div>
+                <div class="field" data-field="budget">
+                  <label for="f-budget">Budget range <span class="req" aria-hidden="true">*</span></label>
+                  <select id="f-budget" name="budget">
+                    <option value="">Select a range…</option>
+                    <option value="under-1k">Under $1k</option>
+                    <option value="1k-5k">$1k–$5k</option>
+                    <option value="5k-25k">$5k–$25k</option>
+                    <option value="25k-plus">$25k+</option>
+                  </select>
+                  <span class="err">Please choose a budget range.</span>
+                </div>
+                <div class="field" data-field="role">
+                  <label for="f-role">Your role <span class="req" aria-hidden="true">*</span></label>
+                  <select id="f-role" name="role">
+                    <option value="">Select a role…</option>
+                    <option value="ic">Individual contributor</option>
+                    <option value="manager">Manager</option>
+                    <option value="director">Director</option>
+                    <option value="vp">VP</option>
+                    <option value="c-level">C-level</option>
+                    <option value="founder">Founder</option>
+                  </select>
+                  <span class="err">Please choose a role.</span>
+                </div>
+                <div class="field" data-field="timeline">
+                  <label for="f-timeline">Timeline <span class="req" aria-hidden="true">*</span></label>
+                  <select id="f-timeline" name="timeline">
+                    <option value="">Select a timeline…</option>
+                    <option value="immediately">Immediately</option>
+                    <option value="this-quarter">This quarter</option>
+                    <option value="3-6-months">3–6 months</option>
+                    <option value="researching">Just researching</option>
+                  </select>
+                  <span class="err">Please choose a timeline.</span>
+                </div>
+                <div class="field" data-field="source">
+                  <label for="f-source">Lead source <span class="req" aria-hidden="true">*</span></label>
+                  <select id="f-source" name="source">
+                    <option value="">Select a source…</option>
+                    <option value="website">Website</option>
+                    <option value="referral">Referral</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="cold-outreach">Cold outreach</option>
+                    <option value="event">Event</option>
+                  </select>
+                  <span class="err">Please choose a lead source.</span>
+                </div>
+                <div class="field full" data-field="need">
+                  <label for="f-need">Need description <span class="req" aria-hidden="true">*</span></label>
+                  <textarea id="f-need" name="need" placeholder="What problem are they trying to solve? The more specific, the higher the Need score."></textarea>
+                  <span class="err">Please describe the need in a sentence or two.</span>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-gold">Score this lead</button>
+                <button type="button" class="btn btn-outline" id="loadSamplesBtn">Load 5 sample leads</button>
+                <button type="button" class="btn btn-outline" id="resetFormBtn">Clear form</button>
+              </div>
+              <p class="status-line" id="statusLine" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <!-- Result panel -->
+          <div class="card" id="resultCard" aria-live="polite">
+            <h3>Score breakdown</h3>
+            <p class="card-sub">BANT+ factor scores for the most recently scored lead.</p>
+            <div id="resultEmpty" class="result-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#d4af63" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
+              <p>No lead scored yet.<br />Fill in the form, or load the sample leads to see scoring in action.</p>
+            </div>
+            <div id="resultBody" hidden>
+              <div class="score-top">
+                <div><span class="score-num" id="scoreNum">0</span><span class="score-of"> / 100</span></div>
+                <span class="badge warm" id="tierBadge">Warm</span>
+              </div>
+              <p class="result-who"><b id="resultName"></b><span id="resultMeta"></span></p>
+              <div class="factors" id="factorBars"></div>
+              <p class="reasoning" id="reasoningText"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scoring weights note -->
+        <div class="weights-note">
+          <h3>How scoring works</h3>
+          <p>Every lead is scored with the same transparent, deterministic model — no randomness, no black box. Each answer maps to a 0–100 subscore per factor, and the total is the weighted sum, rounded to a whole number. Hot is 75+, Warm is 50–74, Cold is below 50.</p>
+          <div class="weight-chips" aria-label="Factor weights">
+            <span>Budget · 25%</span>
+            <span>Authority · 20%</span>
+            <span>Need · 25%</span>
+            <span>Timeline · 15%</span>
+            <span>Engagement · 15%</span>
+          </div>
+          <p class="formula">Score = 0.25 × Budget + 0.20 × Authority + 0.25 × Need + 0.15 × Timeline + 0.15 × Engagement</p>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="card" style="margin-top: 18px;">
+          <div class="dash-head">
+            <div>
+              <h3>Ranked lead dashboard</h3>
+              <p class="card-sub">Every scored lead, ranked by score. Click the Score header to flip the order.</p>
+            </div>
+            <button type="button" class="btn btn-outline btn-small" id="exportBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6 11l6 6 6-6"/><path d="M4 21h16"/></svg>
+              Export CSV
+            </button>
+          </div>
+          <div class="dash-counts" id="dashCounts" aria-label="Lead counts by tier"></div>
+          <div class="table-scroll">
+            <table id="leadTable">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Company</th>
+                  <th scope="col" id="scoreTh" aria-sort="descending">
+                    <button type="button" class="sort-btn" id="sortScoreBtn" title="Sort by score">Score <span class="arrow" id="sortArrow" aria-hidden="true">↓</span></button>
+                  </th>
+                  <th scope="col">Tier</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leadTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing" style="padding-top: 24px;">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Pricing</h2>
+          <p>Start with the tier that matches your inquiry volume. Every plan includes the full BANT+ scoring model.</p>
+        </div>
+        <div class="pricing">
+          <article class="price-card">
+            <h3>Starter</h3>
+            <div class="price">$49<small>/mo</small></div>
+            <p>Up to 200 leads/mo, BANT scoring, email alerts.</p>
+            <a class="btn btn-outline" href="#demo">Try the demo</a>
+          </article>
+          <article class="price-card popular">
+            <span class="pop-tag">Most popular</span>
+            <h3>Pro</h3>
+            <div class="price">$149<small>/mo</small></div>
+            <p>Up to 2,000 leads/mo, engagement tracking, instant Slack/CRM routing, follow-up drafts.</p>
+            <a class="btn btn-gold" href="#demo">Try the demo</a>
+          </article>
+          <article class="price-card">
+            <h3>Agency</h3>
+            <div class="price">$399<small>/mo</small></div>
+            <p>Unlimited clients, white-label dashboard, API access, priority support.</p>
+            <a class="btn btn-outline" href="#demo">Try the demo</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <p>LeadQual AI — demo build. Scores are illustrative.</p>
+      </div>
+    </footer>
+
+    <!-- Draft follow-up modal -->
+    <div class="overlay" id="draftOverlay" role="dialog" aria-modal="true" aria-labelledby="draftTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h3 id="draftTitle">Draft follow-up</h3>
+            <p id="draftSub"></p>
+          </div>
+          <button type="button" class="close-x" id="draftClose" aria-label="Close">✕</button>
+        </div>
+        <p class="draft-subject"><span>Subject</span><span id="draftSubject" style="display:inline; text-transform:none; letter-spacing:0; font-size:0.95rem; color:var(--text);"></span></p>
+        <div class="draft-body" id="draftBody"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-gold btn-small" id="copyDraftBtn">Copy to clipboard</button>
+          <button type="button" class="btn btn-outline btn-small" id="draftDoneBtn">Done</button>
+          <span class="copy-feedback" id="copyFeedback" role="status" aria-live="polite"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete confirm modal -->
+    <div class="overlay" id="confirmOverlay" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+      <div class="modal" style="max-width: 440px;">
+        <div class="modal-head">
+          <div>
+            <h3 id="confirmTitle">Delete this lead?</h3>
+            <p id="confirmText"></p>
+          </div>
+          <button type="button" class="close-x" id="confirmClose" aria-label="Cancel">✕</button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-danger btn-small" id="confirmDeleteBtn">Delete lead</button>
+          <button type="button" class="btn btn-outline btn-small" id="confirmCancelBtn">Keep it</button>
+        </div>
+      </div>
+    </div>
+
+    <noscript>
+      <div style="max-width: 1180px; margin: 0 auto; padding: 0 24px 40px;">
+        <p style="border: 1px solid #1f2c47; border-radius: 12px; padding: 16px 20px; color: #9dabc4;">The live demo needs JavaScript to score leads. The scoring model above — Budget 25%, Authority 20%, Need 25%, Timeline 15%, Engagement 15% — is exactly what the demo runs.</p>
+      </div>
+    </noscript>
+    <script>
+      (function () {
+        "use strict";
+
+        /* ---------------- Scoring model (deterministic) ---------------- */
+        var WEIGHTS = { budget: 0.25, authority: 0.20, need: 0.25, timeline: 0.15, engagement: 0.15 };
+
+        var BUDGET = {
+          "under-1k":  { score: 20,  label: "Under $1k" },
+          "1k-5k":     { score: 45,  label: "$1k–$5k" },
+          "5k-25k":    { score: 75,  label: "$5k–$25k" },
+          "25k-plus":  { score: 100, label: "$25k+" }
+        };
+        var ROLE = {
+          "ic":       { score: 25,  label: "Individual contributor" },
+          "manager":  { score: 50,  label: "Manager" },
+          "director": { score: 70,  label: "Director" },
+          "vp":       { score: 90,  label: "VP" },
+          "c-level":  { score: 100, label: "C-level" },
+          "founder":  { score: 100, label: "Founder" }
+        };
+        var TIMELINE = {
+          "immediately":  { score: 100, label: "Immediately" },
+          "this-quarter": { score: 75,  label: "This quarter" },
+          "3-6-months":   { score: 45,  label: "3–6 months" },
+          "researching":  { score: 15,  label: "Just researching" }
+        };
+        var SOURCE = {
+          "website":        { score: 70, label: "Website" },
+          "referral":       { score: 90, label: "Referral" },
+          "linkedin":       { score: 60, label: "LinkedIn" },
+          "cold-outreach":  { score: 40, label: "Cold outreach" },
+          "event":          { score: 80, label: "Event" }
+        };
+
+        var NEED_KEYWORDS = ["crm", "integrat", "automat", "pipeline", "scor", "report", "sync",
+          "migrat", "replac", "manual", "spreadsheet", "team", "onboard", "analytic", "dashboard",
+          "lead", "sales", "follow-up", "follow up", "qualif", "rout", "track", "forecast",
+          "revenue", "cost", "miss", "slow", "urgent", "enquir", "inquir", "volume", "reps"];
+
+        function needScore(text) {
+          var t = (text || "").trim();
+          if (!t) return 5;
+          var len = t.length, s;
+          if (len >= 220) s = 55;
+          else if (len >= 140) s = 48;
+          else if (len >= 80) s = 40;
+          else if (len >= 45) s = 30;
+          else if (len >= 20) s = 20;
+          else s = 10;
+          var lower = t.toLowerCase(), hits = 0;
+          for (var i = 0; i < NEED_KEYWORDS.length; i++) {
+            if (lower.indexOf(NEED_KEYWORDS[i]) !== -1) hits++;
+          }
+          s += Math.min(35, hits * 5);
+          if (/\d/.test(t)) s += 5; /* concrete numbers = a specific, real need */
+          return Math.min(100, s);
+        }
+
+        function engagementScore(lead) {
+          var s = SOURCE[lead.source].score;
+          var len = (lead.need || "").trim().length;
+          if (len >= 160) s += 10;
+          else if (len >= 80) s += 5;
+          return Math.min(100, s);
+        }
+
+        function tierFor(total) {
+          if (total >= 75) return "Hot";
+          if (total >= 50) return "Warm";
+          return "Cold";
+        }
+
+        function scoreLead(lead) {
+          var factors = {
+            budget: BUDGET[lead.budget].score,
+            authority: ROLE[lead.role].score,
+            need: needScore(lead.need),
+            timeline: TIMELINE[lead.timeline].score,
+            engagement: engagementScore(lead)
+          };
+          var total = Math.round(
+            factors.budget * WEIGHTS.budget +
+            factors.authority * WEIGHTS.authority +
+            factors.need * WEIGHTS.need +
+            factors.timeline * WEIGHTS.timeline +
+            factors.engagement * WEIGHTS.engagement
+          );
+          lead.factors = factors;
+          lead.score = total;
+          lead.tier = tierFor(total);
+          return lead;
+        }
+
+        /* ---------------- Reasoning ---------------- */
+        var FACTOR_LABEL = { budget: "Budget", authority: "Authority", need: "Need", timeline: "Timeline", engagement: "Engagement" };
+        var FACTOR_STRONG = {
+          budget: "the budget on the table can fund a real rollout",
+          authority: "they sit senior enough to approve a purchase",
+          need: "the need is spelled out in concrete, specific terms",
+          timeline: "the timeline is genuinely urgent",
+          engagement: "they arrived through a high-intent channel and shared plenty of detail"
+        };
+        var FACTOR_WEAK = {
+          budget: "the stated budget is thin for a full deployment",
+          authority: "they are unlikely to be able to sign off on spend alone",
+          need: "the need is still described in vague terms",
+          timeline: "there is no near-term deadline pushing a decision",
+          engagement: "the channel and the thin detail point to low buying intent so far"
+        };
+        /* Used when the weakest factor is still mid-range or better — a relative, not absolute, weakness. */
+        var FACTOR_SOFT = {
+          budget: "healthy, though not the largest budget a deal like this can carry",
+          authority: "senior, though a final sign-off may still sit one level up",
+          need: "clearly stated, though more operational detail would sharpen it further",
+          timeline: "a real deadline, though not an immediate one",
+          engagement: "a healthy signal, though not from the very highest-intent channel"
+        };
+        var TIER_ACTION = {
+          Hot: "Route this straight to sales with a personal follow-up today.",
+          Warm: "Worth a nurture sequence now, with a personal check-in inside two weeks.",
+          Cold: "Park them in a low-touch nurture stream and revisit if their timeline or engagement changes."
+        };
+
+        function firstName(name) { return (name || "").trim().split(/\s+/)[0] || "This lead"; }
+
+        function buildReasoning(lead) {
+          var keys = Object.keys(lead.factors);
+          var strong = keys[0], weak = keys[0];
+          keys.forEach(function (k) {
+            if (lead.factors[k] > lead.factors[strong]) strong = k;
+            if (lead.factors[k] < lead.factors[weak]) weak = k;
+          });
+          var s1 = firstName(lead.name) + " scores " + lead.score + " (" + lead.tier + "). The strongest signal is " +
+            FACTOR_LABEL[strong] + " at " + lead.factors[strong] + "/100 — " + FACTOR_STRONG[strong] + ".";
+          var s2 = lead.factors[weak] >= 50
+            ? "The softest spot is " + FACTOR_LABEL[weak] + " at " + lead.factors[weak] + "/100 — " + FACTOR_SOFT[weak] + "."
+            : "The main drag is " + FACTOR_LABEL[weak] + " at " + lead.factors[weak] + "/100 — " + FACTOR_WEAK[weak] + ".";
+          return s1 + " " + s2 + " " + TIER_ACTION[lead.tier];
+        }
+
+        /* ---------------- Follow-up drafts ---------------- */
+        var TIMELINE_PHRASE = {
+          "immediately": "right away",
+          "this-quarter": "this quarter",
+          "3-6-months": "over the next few months",
+          "researching": "before it becomes urgent"
+        };
+        function needSnippet(need) {
+          var t = (need || "").trim();
+          var firstSentence = t.split(/(?<=[.!?])\s+/)[0] || t;
+          if (firstSentence.length > 170) firstSentence = firstSentence.slice(0, 167).trim() + "…";
+          return firstSentence;
+        }
+        function buildDraft(lead) {
+          var fn = firstName(lead.name);
+          var snippet = needSnippet(lead.need);
+          var when = TIMELINE_PHRASE[lead.timeline];
+          var subject, body;
+          if (lead.tier === "Hot") {
+            subject = "Quick next step for " + lead.company + "'s lead qualification";
+            body = "Hi " + fn + ",\n\n" +
+              "Thanks for getting in touch. From what you shared — \"" + snippet + "\" — it sounds like " + lead.company +
+              " needs this solved " + when + ", and your score puts you at the top of our follow-up list.\n\n" +
+              "I'd suggest a 25-minute working session this week: we'll map your current intake against a BANT+ scoring model and show you exactly which leads your reps should call first, and in what order.\n\n" +
+              "Would Thursday or Friday morning work for you? If it's easier, just reply with a time and I'll send the invite.\n\n" +
+              "Best regards,\nThe LeadQual AI team";
+          } else if (lead.tier === "Warm") {
+            subject = "A thought on qualifying leads at " + lead.company;
+            body = "Hi " + fn + ",\n\n" +
+              "Thanks for reaching out from " + lead.company + ". You mentioned: \"" + snippet + "\"\n\n" +
+              "Teams at a similar stage usually get the fastest win by scoring the enquiries they already receive — before changing anything about how new ones are captured. It tends to surface within a week where follow-up time is being spent on leads that were never going to buy.\n\n" +
+              "If it would help, I can send over a short breakdown of how the BANT+ model works in practice. And if a brief chat makes sense in the next couple of weeks, I'm happy to work around your schedule — no pressure if the timing isn't right yet.\n\n" +
+              "Best regards,\nThe LeadQual AI team";
+          } else {
+            subject = "One useful idea for " + lead.company + " — no rush";
+            body = "Hi " + fn + ",\n\n" +
+              "Noted your interest in lead qualification at " + lead.company + " — thanks for looking into it.\n\n" +
+              "Since you're still researching, here's the one exercise we'd recommend before buying any tooling: take last month's enquiries and score each on budget, authority, need and timeline. Most teams find a small group of obvious wins hiding in the pile, plus a long tail that can safely wait.\n\n" +
+              "If it becomes a priority down the line, we'd be glad to help you automate it. Until then, no follow-ups from us — the ball is in your court.\n\n" +
+              "Best regards,\nThe LeadQual AI team";
+          }
+          return { subject: subject, body: body };
+        }
+
+        /* ---------------- Sample leads ---------------- */
+        var SAMPLE_LEADS = [
+          {
+            name: "Sarah Mitchell", email: "sarah.mitchell@cloudnine.io", company: "CloudNine Systems",
+            budget: "25k-plus", role: "vp", timeline: "this-quarter", source: "referral",
+            need: "We need to integrate Salesforce with our marketing platform so every inbound lead is scored and routed to the right rep automatically. Right now our 14 reps lose hours to manual spreadsheet tracking, and follow-up is inconsistent — good leads go cold before anyone calls."
+          },
+          {
+            name: "Daniel Okafor", email: "daniel.okafor@brightpathlogistics.com", company: "Brightpath Logistics",
+            budget: "5k-25k", role: "director", timeline: "this-quarter", source: "website",
+            need: "We generate about 800 marketing leads a month, but sales works them in the order they arrive and conversion is poor. We need a scoring model with reporting the whole team can see, so reps focus on the leads most likely to close this quarter."
+          },
+          {
+            name: "Priya Nair", email: "priya.nair@harborfinch.co", company: "Harbor & Finch Consulting",
+            budget: "1k-5k", role: "manager", timeline: "3-6-months", source: "linkedin",
+            need: "We want a tidier way to track incoming enquiries and follow up consistently. At the moment everything sits in shared inboxes and things slip through the cracks, especially when someone is on leave."
+          },
+          {
+            name: "Tom Becker", email: "tom.becker@northwindretail.com", company: "Northwind Retail Group",
+            budget: "under-1k", role: "ic", timeline: "researching", source: "cold-outreach",
+            need: "Looking into what tools exist for managing leads better. Nothing urgent, just comparing options for the team."
+          },
+          {
+            name: "Alex Rivera", email: "alex.rivera@stateuniversity.edu", company: "State University (student project)",
+            budget: "under-1k", role: "ic", timeline: "researching", source: "website",
+            need: "Researching how companies qualify leads for a university course project on sales technology."
+          }
+        ];
+
+        /* ---------------- State & DOM ---------------- */
+        var leads = [];
+        var nextId = 1;
+        var sortDir = "desc"; /* 'desc' | 'asc' */
+
+        var form = document.getElementById("leadForm");
+        var statusLine = document.getElementById("statusLine");
+        var tbody = document.getElementById("leadTbody");
+        var countsEl = document.getElementById("dashCounts");
+        var resultEmpty = document.getElementById("resultEmpty");
+        var resultBody = document.getElementById("resultBody");
+        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function setStatus(msg, isError) {
+          statusLine.textContent = msg || "";
+          statusLine.className = "status-line" + (isError ? " error" : "");
+        }
+
+        function upsertLead(data) {
+          var key = data.email.toLowerCase();
+          for (var i = 0; i < leads.length; i++) {
+            if (leads[i].email.toLowerCase() === key) {
+              data.id = leads[i].id;
+              leads[i] = scoreLead(data);
+              return leads[i];
+            }
+          }
+          data.id = nextId++;
+          leads.push(scoreLead(data));
+          return data;
+        }
+
+        function sortedLeads() {
+          var arr = leads.slice();
+          arr.sort(function (a, b) {
+            return sortDir === "desc" ? b.score - a.score : a.score - b.score;
+          });
+          return arr;
+        }
+
+        /* ---------------- Result panel ---------------- */
+        function showResult(lead) {
+          resultEmpty.hidden = true;
+          resultBody.hidden = false;
+          var numEl = document.getElementById("scoreNum");
+          var badge = document.getElementById("tierBadge");
+          badge.textContent = lead.tier;
+          badge.className = "badge " + lead.tier.toLowerCase();
+          document.getElementById("resultName").textContent = lead.name;
+          document.getElementById("resultMeta").textContent =
+            ROLE[lead.role].label + " · " + lead.company + " · via " + SOURCE[lead.source].label;
+
+          var bars = document.getElementById("factorBars");
+          bars.innerHTML = "";
+          ["budget", "authority", "need", "timeline", "engagement"].forEach(function (k) {
+            var v = lead.factors[k];
+            var row = document.createElement("div");
+            row.className = "factor";
+            var fillClass = "fill" + (v < 50 ? " cold" : "");
+            row.innerHTML =
+              '<span class="f-label"></span>' +
+              '<span class="track"><span class="' + fillClass + '" style="display:block"></span></span>' +
+              '<span class="f-val"></span>';
+            row.querySelector(".f-label").textContent = FACTOR_LABEL[k];
+            row.querySelector(".f-val").textContent = v;
+            bars.appendChild(row);
+            var fill = row.querySelector(".fill");
+            if (reduceMotion) { fill.style.width = v + "%"; }
+            else { requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = v + "%"; }); }); }
+          });
+
+          document.getElementById("reasoningText").innerHTML = "";
+          var r = document.createElement("span");
+          r.textContent = buildReasoning(lead);
+          document.getElementById("reasoningText").appendChild(r);
+
+          /* Count-up the big number */
+          if (reduceMotion) { numEl.textContent = lead.score; return; }
+          var start = null, target = lead.score;
+          function tick(ts) {
+            if (!start) start = ts;
+            var p = Math.min(1, (ts - start) / 550);
+            numEl.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }
+
+        /* ---------------- Dashboard ---------------- */
+        function renderDashboard() {
+          var arr = sortedLeads();
+          var counts = { Hot: 0, Warm: 0, Cold: 0 };
+          leads.forEach(function (l) { counts[l.tier]++; });
+          countsEl.innerHTML =
+            '<span class="count-chip"><b>' + leads.length + "</b>&nbsp; total</span>" +
+            '<span class="count-chip"><span class="dotc" style="background:var(--hot)"></span><b>' + counts.Hot + "</b>&nbsp; Hot</span>" +
+            '<span class="count-chip"><span class="dotc" style="background:var(--warm)"></span><b>' + counts.Warm + "</b>&nbsp; Warm</span>" +
+            '<span class="count-chip"><span class="dotc" style="background:var(--cold)"></span><b>' + counts.Cold + "</b>&nbsp; Cold</span>";
+
+          tbody.innerHTML = "";
+          if (!arr.length) {
+            var tr = document.createElement("tr");
+            tr.className = "empty-row";
+            tr.innerHTML = '<td colspan="6">No leads scored yet — score one above, or load the 5 sample leads.</td>';
+            tbody.appendChild(tr);
+            return;
+          }
+          arr.forEach(function (lead, idx) {
+            var tr = document.createElement("tr");
+
+            var tdRank = document.createElement("td");
+            tdRank.className = "rank"; tdRank.setAttribute("data-label", "Rank");
+            tdRank.textContent = idx + 1;
+
+            var tdName = document.createElement("td");
+            tdName.setAttribute("data-label", "Name");
+            var n = document.createElement("span"); n.className = "lead-name"; n.textContent = lead.name;
+            var e = document.createElement("span"); e.className = "lead-email"; e.textContent = lead.email;
+            tdName.appendChild(n); tdName.appendChild(e);
+
+            var tdCompany = document.createElement("td");
+            tdCompany.setAttribute("data-label", "Company");
+            tdCompany.textContent = lead.company;
+
+            var tdScore = document.createElement("td");
+            tdScore.className = "score-cell"; tdScore.setAttribute("data-label", "Score");
+            tdScore.textContent = lead.score;
+
+            var tdTier = document.createElement("td");
+            tdTier.setAttribute("data-label", "Tier");
+            var b = document.createElement("span");
+            b.className = "badge " + lead.tier.toLowerCase(); b.textContent = lead.tier;
+            tdTier.appendChild(b);
+
+            var tdActions = document.createElement("td");
+            tdActions.className = "actions-cell"; tdActions.setAttribute("data-label", "Actions");
+            var wrap = document.createElement("div"); wrap.className = "row-actions";
+            var draftBtn = document.createElement("button");
+            draftBtn.type = "button"; draftBtn.className = "btn btn-outline btn-small";
+            draftBtn.textContent = "Draft follow-up";
+            draftBtn.addEventListener("click", function () { openDraft(lead.id); });
+            var delBtn = document.createElement("button");
+            delBtn.type = "button"; delBtn.className = "btn btn-danger btn-small";
+            delBtn.textContent = "Delete";
+            delBtn.addEventListener("click", function () { askDelete(lead.id); });
+            wrap.appendChild(draftBtn); wrap.appendChild(delBtn);
+            tdActions.appendChild(wrap);
+
+            tr.appendChild(tdRank); tr.appendChild(tdName); tr.appendChild(tdCompany);
+            tr.appendChild(tdScore); tr.appendChild(tdTier); tr.appendChild(tdActions);
+            tbody.appendChild(tr);
+          });
+        }
+
+        /* ---------------- Modals ---------------- */
+        var draftOverlay = document.getElementById("draftOverlay");
+        var confirmOverlay = document.getElementById("confirmOverlay");
+        var pendingDeleteId = null;
+
+        function openOverlay(el) { el.classList.add("open"); }
+        function closeOverlay(el) { el.classList.remove("open"); }
+
+        function findLead(id) {
+          for (var i = 0; i < leads.length; i++) if (leads[i].id === id) return leads[i];
+          return null;
+        }
+
+        function openDraft(id) {
+          var lead = findLead(id);
+          if (!lead) return;
+          var draft = buildDraft(lead);
+          document.getElementById("draftSub").textContent =
+            "For " + lead.name + " at " + lead.company + " · " + lead.tier + " lead · score " + lead.score + "/100";
+          document.getElementById("draftSubject").textContent = draft.subject;
+          document.getElementById("draftBody").textContent = draft.body;
+          document.getElementById("copyFeedback").textContent = "";
+          draftOverlay.setAttribute("data-full-text", "Subject: " + draft.subject + "\n\n" + draft.body);
+          openOverlay(draftOverlay);
+          document.getElementById("copyDraftBtn").focus();
+        }
+
+        function askDelete(id) {
+          var lead = findLead(id);
+          if (!lead) return;
+          pendingDeleteId = id;
+          document.getElementById("confirmText").textContent =
+            lead.name + " (" + lead.company + ", score " + lead.score + ") will be removed from the dashboard. This can't be undone.";
+          openOverlay(confirmOverlay);
+          document.getElementById("confirmCancelBtn").focus();
+        }
+
+        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+          if (pendingDeleteId !== null) {
+            var lead = findLead(pendingDeleteId);
+            leads = leads.filter(function (l) { return l.id !== pendingDeleteId; });
+            pendingDeleteId = null;
+            renderDashboard();
+            if (lead) setStatus(lead.name + " removed from the dashboard.");
+          }
+          closeOverlay(confirmOverlay);
+        });
+        document.getElementById("confirmCancelBtn").addEventListener("click", function () { closeOverlay(confirmOverlay); });
+        document.getElementById("confirmClose").addEventListener("click", function () { closeOverlay(confirmOverlay); });
+        document.getElementById("draftClose").addEventListener("click", function () { closeOverlay(draftOverlay); });
+        document.getElementById("draftDoneBtn").addEventListener("click", function () { closeOverlay(draftOverlay); });
+        [draftOverlay, confirmOverlay].forEach(function (ov) {
+          ov.addEventListener("click", function (ev) { if (ev.target === ov) closeOverlay(ov); });
+        });
+        document.addEventListener("keydown", function (ev) {
+          if (ev.key === "Escape") { closeOverlay(draftOverlay); closeOverlay(confirmOverlay); }
+        });
+
+        document.getElementById("copyDraftBtn").addEventListener("click", function () {
+          var text = draftOverlay.getAttribute("data-full-text") || "";
+          var fb = document.getElementById("copyFeedback");
+          function done(ok) { fb.textContent = ok ? "Copied to clipboard." : "Copy didn't work here — select the text above and copy it manually."; }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
+          } else { fallback(); }
+          function fallback() {
+            var ta = document.createElement("textarea");
+            ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+            document.body.appendChild(ta); ta.select();
+            var ok = false;
+            try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+            document.body.removeChild(ta);
+            done(ok);
+          }
+        });
+
+        /* ---------------- Sort & CSV ---------------- */
+        document.getElementById("sortScoreBtn").addEventListener("click", function () {
+          sortDir = sortDir === "desc" ? "asc" : "desc";
+          document.getElementById("sortArrow").textContent = sortDir === "desc" ? "↓" : "↑";
+          document.getElementById("scoreTh").setAttribute("aria-sort", sortDir === "desc" ? "descending" : "ascending");
+          renderDashboard();
+        });
+
+        function csvEscape(v) {
+          var s = String(v == null ? "" : v);
+          if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+          return s;
+        }
+        function exportCSV() {
+          if (!leads.length) { setStatus("Nothing to export yet — score a lead first.", true); return; }
+          var rows = [["Name", "Email", "Company", "Budget", "Role", "Timeline", "Source", "Score", "Tier"]];
+          var ranked = leads.slice().sort(function (a, b) { return b.score - a.score; });
+          ranked.forEach(function (l) {
+            rows.push([l.name, l.email, l.company, BUDGET[l.budget].label, ROLE[l.role].label,
+              TIMELINE[l.timeline].label, SOURCE[l.source].label, l.score, l.tier]);
+          });
+          var csv = rows.map(function (r) { return r.map(csvEscape).join(","); }).join("\n");
+          var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url; a.download = "leadqual-leads.csv";
+          document.body.appendChild(a); a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(url); }, 800);
+          setStatus("Exported " + ranked.length + " ranked lead" + (ranked.length === 1 ? "" : "s") + " to leadqual-leads.csv.");
+        }
+        document.getElementById("exportBtn").addEventListener("click", exportCSV);
+
+        /* ---------------- Form handling ---------------- */
+        var FIELD_IDS = { name: "f-name", email: "f-email", company: "f-company", budget: "f-budget", role: "f-role", timeline: "f-timeline", source: "f-source", need: "f-need" };
+
+        function readForm() {
+          return {
+            name: document.getElementById("f-name").value.trim(),
+            email: document.getElementById("f-email").value.trim(),
+            company: document.getElementById("f-company").value.trim(),
+            budget: document.getElementById("f-budget").value,
+            role: document.getElementById("f-role").value,
+            timeline: document.getElementById("f-timeline").value,
+            source: document.getElementById("f-source").value,
+            need: document.getElementById("f-need").value.trim()
+          };
+        }
+        function fillForm(lead) {
+          document.getElementById("f-name").value = lead.name;
+          document.getElementById("f-email").value = lead.email;
+          document.getElementById("f-company").value = lead.company;
+          document.getElementById("f-budget").value = lead.budget;
+          document.getElementById("f-role").value = lead.role;
+          document.getElementById("f-timeline").value = lead.timeline;
+          document.getElementById("f-source").value = lead.source;
+          document.getElementById("f-need").value = lead.need;
+        }
+        function markField(key, invalid) {
+          var wrap = form.querySelector('[data-field="' + key + '"]');
+          if (wrap) wrap.classList.toggle("invalid", !!invalid);
+          var input = document.getElementById(FIELD_IDS[key]);
+          if (input) input.setAttribute("aria-invalid", invalid ? "true" : "false");
+        }
+        function validate(lead) {
+          var bad = [];
+          if (!lead.name) bad.push("name");
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(lead.email)) bad.push("email");
+          if (!lead.company) bad.push("company");
+          if (!lead.budget) bad.push("budget");
+          if (!lead.role) bad.push("role");
+          if (!lead.timeline) bad.push("timeline");
+          if (!lead.source) bad.push("source");
+          if (!lead.need) bad.push("need");
+          Object.keys(FIELD_IDS).forEach(function (k) { markField(k, bad.indexOf(k) !== -1); });
+          return bad;
+        }
+        ["input", "change"].forEach(function (evt) {
+          form.addEventListener(evt, function (e) {
+            var fieldEl = e.target.closest ? e.target.closest(".field") : null;
+            if (fieldEl) fieldEl.classList.remove("invalid");
+          });
+        });
+
+        form.addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          var data = readForm();
+          var bad = validate(data);
+          if (bad.length) {
+            setStatus("Please fix the highlighted field" + (bad.length === 1 ? "" : "s") + " — every field is needed for an accurate score.", true);
+            var first = document.getElementById(FIELD_IDS[bad[0]]);
+            if (first) first.focus();
+            return;
+          }
+          var lead = upsertLead(data);
+          renderDashboard();
+          showResult(lead);
+          setStatus(lead.name + " scored " + lead.score + " (" + lead.tier + ") and added to the dashboard.");
+          document.getElementById("resultCard").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+        });
+
+        document.getElementById("loadSamplesBtn").addEventListener("click", function () {
+          var scored = SAMPLE_LEADS.map(function (s) {
+            return upsertLead({
+              name: s.name, email: s.email, company: s.company, budget: s.budget,
+              role: s.role, timeline: s.timeline, source: s.source, need: s.need
+            });
+          });
+          renderDashboard();
+          var top = scored.slice().sort(function (a, b) { return b.score - a.score; })[0];
+          fillForm(top);
+          showResult(top);
+          setStatus("5 sample leads loaded and scored. Top of the pile: " + top.name + " at " + top.score + " (" + top.tier + ") — the form now shows their inquiry.");
+        });
+
+        document.getElementById("resetFormBtn").addEventListener("click", function () {
+          form.reset();
+          Object.keys(FIELD_IDS).forEach(function (k) { markField(k, false); });
+          setStatus("");
+          document.getElementById("f-name").focus();
+        });
+
+        renderDashboard();
+      })();
+    </script>
+  </body>
+</html>
